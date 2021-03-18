@@ -11,9 +11,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     
 
+    @IBOutlet var filterButton: UIButton!
     @IBOutlet var imageView: UIImageView!
     
     @IBOutlet var intensity: UISlider!
+    
+    @IBOutlet var radius: UISlider!
+    
+    @IBOutlet var scale: UISlider!
+    
+    
     var currentImage: UIImage!
     
     var context: CIContext!
@@ -25,7 +32,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(importImage))
         
         context = CIContext()
-        currentFilter = CIFilter(name: "CISepiaTone")!
+        currentFilter = CIFilter(name: "CISepiaTone")
+        filterButton.setTitle(currentFilter.name, for: .normal)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -67,11 +75,18 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBAction func save(_ sender: UIButton) {
         if let image = imageView.image {
             UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+        } else {
+            // Challenge 1: show error message if image is empty
+            let ac = UIAlertController(title: "Save error", message: "There is no image loaded to save", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            present(ac, animated:  true)
         }
     }
     
-    @IBAction func intensityChanged(_ sender: UISlider) {
-        applyProcessing()
+    @IBAction func sliderChanged(_ sender: UISlider) {
+        if currentImage != nil {
+            applyProcessing()
+        }
     }
     
     func setFilter(action: UIAlertAction) {
@@ -82,6 +97,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
             applyProcessing()
         }
+        filterButton.setTitle(currentFilter.name, for: .normal)
     }
     
     func applyProcessing() {
@@ -91,11 +107,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             currentFilter.setValue(intensity.value, forKey: kCIInputIntensityKey)
         }
         if inputKeys.contains(kCIInputRadiusKey) {
-            currentFilter.setValue(intensity.value * 200, forKey: kCIInputRadiusKey)
+            currentFilter.setValue(radius.value * 200, forKey: kCIInputRadiusKey)
         }
         if inputKeys.contains(kCIInputScaleKey) {
-            currentFilter.setValue(intensity.value * 10, forKey: kCIInputScaleKey)
+            currentFilter.setValue(scale.value * 10, forKey: kCIInputScaleKey)
         }
+        
         if inputKeys.contains(kCIInputCenterKey) {
             currentFilter.setValue(CIVector(x: currentImage.size.width / 2, y: currentImage.size.height / 2), forKey: kCIInputCenterKey)
         }
