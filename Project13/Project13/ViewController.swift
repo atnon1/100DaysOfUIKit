@@ -43,6 +43,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let beginImage = CIImage(image: currentImage)
         currentFilter.setValue(beginImage, forKey: kCIInputImageKey)
         //currentFilter.setValue(intensity.value, forKey: kCIInputIntensityKey)
+        UIView.animate(withDuration: 1, animations: {
+            self.imageView.alpha = 0
+        })
         applyProcessing()
     }
 
@@ -122,6 +125,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         if let cgImage = context.createCGImage(image, from: image.extent) {
             let processedImage = UIImage(cgImage: cgImage)
             imageView.image = processedImage
+            UIView.animate(withDuration: 1) {
+                self.imageView.alpha = 1
+            }
         }
     }
     
