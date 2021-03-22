@@ -1,0 +1,30 @@
+[
+    {
+      "name": "Russia",
+      "capital": "Moscow",
+      "capitalLatitude": 55.7522200,
+      "capitalLongitude": 37.6155600,
+      "population":  146238185,
+      "area": 17125191,
+      "flagFileName": "russia"
+    },
+    {
+      "name": "Spain",
+      "capital": "Madrid",
+      "capitalLatitude": 40.4165,
+      "capitalLongitude": -3.70256,
+      "population":  47450795,
+      "area": 505990,
+      "flagFileName": "spain"
+    },
+    {
+      "name": "USA",
+      "capital": "Washington",
+      "capitalLatitude": 38.8951,
+      "capitalLongitude": -77.0364,
+      "population":  328239523,
+      "area": 9833520,
+      "flagFileName": "us"
+    }
+]
+

@@ -31,9 +31,9 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="us" translatesAutoresizingMaskIntoConstraints="NO" id="xeX-ty-Rfx">
-                                            <rect key="frame" x="275" y="5" width="100" height="61"/>
+                                            <rect key="frame" x="275" y="10" width="100" height="51"/>
                                             <constraints>
-                                                <constraint firstAttribute="height" constant="50" id="B1P-KP-DKB"/>
+                                                <constraint firstAttribute="height" constant="51" id="B1P-KP-DKB"/>
                                                 <constraint firstAttribute="width" constant="100" id="CsB-qe-gfF"/>
                                             </constraints>
                                         </imageView>
@@ -41,10 +41,10 @@
                                     <constraints>
                                         <constraint firstItem="C5S-jJ-lpx" firstAttribute="leading" secondItem="GrI-uS-XdF" secondAttribute="leading" constant="20" symbolic="YES" id="KJj-ns-4OE"/>
                                         <constraint firstItem="xeX-ty-Rfx" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="C5S-jJ-lpx" secondAttribute="trailing" constant="8" symbolic="YES" id="OD4-HC-118"/>
-                                        <constraint firstItem="xeX-ty-Rfx" firstAttribute="top" secondItem="GrI-uS-XdF" secondAttribute="top" constant="5" id="Tal-5m-R19"/>
+                                        <constraint firstItem="xeX-ty-Rfx" firstAttribute="top" secondItem="GrI-uS-XdF" secondAttribute="top" constant="10" id="Tal-5m-R19"/>
                                         <constraint firstItem="C5S-jJ-lpx" firstAttribute="centerY" secondItem="GrI-uS-XdF" secondAttribute="centerY" id="Wo8-kM-YvJ"/>
+                                        <constraint firstAttribute="bottom" secondItem="xeX-ty-Rfx" secondAttribute="bottom" constant="10" id="cPw-wS-HtB"/>
                                         <constraint firstItem="xeX-ty-Rfx" firstAttribute="trailing" secondItem="GrI-uS-XdF" secondAttribute="trailingMargin" id="jej-3Q-6jr"/>
-                                        <constraint firstItem="xeX-ty-Rfx" firstAttribute="centerY" secondItem="GrI-uS-XdF" secondAttribute="centerY" id="yy3-U5-FxU"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
