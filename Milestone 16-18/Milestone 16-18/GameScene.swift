@@ -146,7 +146,7 @@ class GameScene: SKScene {
     
     @objc func setTimer() {
         timeLeft -= 0.1
-        if String(format: "%.1f", timeLeft) == "0.0" {
+        if String(format: "%.1f", timeLeft) == "0.0" || timeLeft < 0.01 {
             timer.invalidate()
             timeTimer.invalidate()
             
