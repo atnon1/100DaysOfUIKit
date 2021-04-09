@@ -13,7 +13,7 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Register", style: .plain, target: self, action: #selector(registerLocal))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Schedule", style: .plain, target: self, action: #selector(scheduleLocal))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Schedule", style: .plain, target: self, action: #selector(tapSchedule))
     }
 
     @objc func registerLocal() {
@@ -29,8 +29,11 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
         
     }
     
+    @objc func tapSchedule() {
+        scheduleLocal()
+    }
     
-    @objc func scheduleLocal() {
+    func scheduleLocal(interval: TimeInterval = 5) {
         registerCategories()
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()
@@ -39,10 +42,10 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
         content.title = "My notification"
         content.body = "Here is a body"
         content.userInfo = ["CustomData" : "blahblah"]
-        content.categoryIdentifier = "alert"
+        content.categoryIdentifier = "alarm"
         content.sound = UNNotificationSound.default
         //let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: interval, repeats: false)
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         center.add(request)
     }
@@ -52,19 +55,29 @@ class ViewController: UIViewController, UNUserNotificationCenterDelegate {
         center.delegate = self
         
         let show = UNNotificationAction(identifier: "show", title: "Tell me more..", options: .foreground)
-        let category = UNNotificationCategory(identifier: "alert", actions: [show], intentIdentifiers: [])
-        center.setNotificationCategories([category])
+        let showAnother = UNNotificationAction(identifier: "showAnother", title: "Tell me another..", options: .foreground)
+        let later = UNNotificationAction(identifier: "later", title: "Remind me later", options: .authenticationRequired)
+        let showCategory = UNNotificationCategory(identifier: "alarm", actions: [show, showAnother, later], intentIdentifiers: [])
+        center.setNotificationCategories([showCategory])
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo["CustomData"]
         if let customData = userInfo as? String {
                 print(customData)
+            let alert = UIAlertController(title: "You came from notification", message: nil, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
             switch response.actionIdentifier {
             case UNNotificationDefaultActionIdentifier:
                 print("default")
             case "show":
-                print("show more information")
+                alert.message = "I am showing you"
+                present(alert, animated: true)
+            case "showAnother":
+                alert.message = "I am showing you another"
+                present(alert, animated: true)
+            case "later":
+                scheduleLocal(interval: 10)
             default:
                 break
             }
