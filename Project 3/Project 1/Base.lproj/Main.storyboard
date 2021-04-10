@@ -43,6 +43,13 @@
                     <navigationItem key="navigationItem" id="pNK-s7-6Ka"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZM7-p1-cDz" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="U58-Lw-r2i">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                    <items>
+                        <barButtonItem title="Item" id="a3M-vZ-J1Y"/>
+                    </items>
+                </toolbar>
             </objects>
             <point key="canvasLocation" x="927.53623188405811" y="-90.401785714285708"/>
         </scene>
