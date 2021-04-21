@@ -125,7 +125,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     fileprivate func createFinishAt(column: Int, row: Int) {
         let node = SKSpriteNode(imageNamed: "finish")
         node.name = "finish"
-        node.physicsBody = SKPhysicsBody(circleOfRadius: node.size.width / 2)
+        node.physicsBody = SKPhysicsBody(circleOfRadius: 1)
         node.physicsBody?.categoryBitMask = ColisionType.finish.rawValue
         node.physicsBody?.contactTestBitMask = ColisionType.player.rawValue
         node.physicsBody?.collisionBitMask = 0
