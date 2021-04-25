@@ -6,18 +6,61 @@
 //
 
 import UIKit
+import LocalAuthentication
 
 class ViewController: UICollectionViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     var people = [Person]()
+    var isAuthenticated = false {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addPerson))
+        askAuthentication()
+        let notificationCenter = NotificationCenter.default
+        notificationCenter.addObserver(self, selector: #selector(cancelAuthentication), name: UIApplication.willResignActiveNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(askAuthentication), name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
+    
+    @objc func cancelAuthentication() {
+        isAuthenticated = false
+    }
+    
+    @objc func askAuthentication() {
+        guard !isAuthenticated else {
+            return
+        }
+        var error: NSError?
+        let context = LAContext()
+        let reason = "Identify yourself!"
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { [weak self] success, error in
+                DispatchQueue.main.async {
+                    if success {
+                        self?.isAuthenticated = true
+                    } else {
+                        let ac = UIAlertController(title: "Authentication failed", message: nil, preferredStyle: .alert)
+                        ac.addAction(UIAlertAction(title: "OK", style: .default) { _ in self?.askAuthentication() } )
+                        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                        self?.present(ac, animated: true)
+                    }
+                }
+            }
+        } else {
+            isAuthenticated = true
+        }
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return people.count
+        if isAuthenticated {
+            return people.count
+        } else {
+            return 0
+        }
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
