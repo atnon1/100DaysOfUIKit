@@ -17,15 +17,78 @@ enum CollisionType: UInt32 {
 class GameScene: SKScene, SKPhysicsContactDelegate {
     
     weak var viewController: GameViewController?
+    var isGameOver = false
+    
     var buildings = [BuildingNode]()
     
     var player1: SKSpriteNode!
     var player2: SKSpriteNode!
     var banana: SKSpriteNode!
+    var windVector: CGVector!
+    var windLabel: SKLabelNode!
     
     var currentPlayer = 1
     
+    var player1ScoreLabel: SKLabelNode!
+    var player1Score = 0 {
+        didSet {
+            player1ScoreLabel.text = "\(player1Score)"
+        }
+    }
+    var player2ScoreLabel: SKLabelNode!
+    var player2Score = 0 {
+        didSet {
+            player2ScoreLabel.text = "\(player2Score)"
+        }
+    }
+    let pointsToWin = 3
+    
     override func didMove(to view: SKView) {
+        if player1ScoreLabel == nil {
+            player1ScoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+            player1ScoreLabel.text = "\(player1Score)"
+            player1ScoreLabel.fontSize = 44
+            player1ScoreLabel.fontColor = .blue
+            player1ScoreLabel.zPosition = 1
+            player1ScoreLabel.position = CGPoint(x: 16, y: 16)
+            player1ScoreLabel.horizontalAlignmentMode = .left
+        } else {
+            player1ScoreLabel.removeFromParent()
+        }
+        addChild(player1ScoreLabel)
+        
+        if player2ScoreLabel == nil {
+            player2ScoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+            player2ScoreLabel.text = "\(player2Score)"
+            player2ScoreLabel.fontSize = 44
+            player2ScoreLabel.fontColor = .red
+            player2ScoreLabel.zPosition = 1
+            player2ScoreLabel.horizontalAlignmentMode = .right
+            player2ScoreLabel.position = CGPoint(x: 1008 , y: 16)
+        } else {
+            player2ScoreLabel.removeFromParent()
+        }
+        addChild(player2ScoreLabel)
+        let windForce = Int.random(in: -3...3)
+        var windLabelText = "Wind: "
+        if windForce < 0 {
+            windLabelText += "<<<"
+        } else if windForce > 0 {
+            windLabelText += ">>>"
+        }
+        windLabelText += "\(abs(windForce))"
+        
+        windVector = CGVector(dx: Double(windForce) * 1.5, dy: -9)
+        
+        windLabel = SKLabelNode(fontNamed: "Chalkduster")
+        windLabel.fontSize = 22
+        windLabel.horizontalAlignmentMode = .left
+        windLabel.text = windLabelText
+        windLabel.position = CGPoint(x: 16, y: 700)
+        addChild(windLabel)
+        
+        physicsWorld.gravity = windVector
+        
         backgroundColor = UIColor(hue: 0.669, saturation: 0.99, brightness: 0.67, alpha: 1)
         createBuildings()
         createPlayers()
@@ -115,6 +178,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
+        guard isGameOver == false else { return }
         let firstBody: SKPhysicsBody
         let secondBody: SKPhysicsBody
         if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
@@ -131,9 +195,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             bananaHit(secondNode, at: contact.contactPoint)
         }
         if secondNode.name == "player1" {
+            player2Score += 1
             destroy(player1)
         }
         if secondNode.name == "player2" {
+            player1Score += 1
             destroy(player2)
         }
     }
@@ -169,22 +235,42 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         banana.removeFromParent()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            let newGame = GameScene(size: self.size)
-            newGame.viewController = self.viewController
-            self.viewController?.currentGame = newGame
-            
-            self.changePlayer()
-            newGame.currentPlayer = self.currentPlayer
-            
-            let transition = SKTransition.doorway(withDuration: 1.5)
-            self.view?.presentScene(newGame, transition: transition)
+            if self.player1Score == self.pointsToWin || self.player2Score == self.pointsToWin {
+                let label = SKLabelNode(fontNamed: "Chalkduster")
+                if self.player1Score == self.pointsToWin {
+                    label.text = "PLAYER ONE WINS"
+                } else {
+                    label.text = "PLAYER TWO WINS"
+                }
+                label.fontSize = 80
+                label.position = CGPoint(x: 512, y: 334)
+                label.zPosition = 1
+                self.addChild(label)
+            } else {
+                let newGame = GameScene(size: self.size)
+                newGame.viewController = self.viewController
+                self.viewController?.currentGame = newGame
+                
+                newGame.player1ScoreLabel = self.player1ScoreLabel
+                newGame.player2ScoreLabel = self.player2ScoreLabel
+                newGame.player1Score = self.player1Score
+                newGame.player2Score = self.player2Score
+                
+                
+                self.changePlayer()
+                newGame.currentPlayer = self.currentPlayer
+                
+                let transition = SKTransition.doorway(withDuration: 1.5)
+                self.view?.presentScene(newGame, transition: transition)
+            }
         }
     }
     
     override func update(_ currentTime: TimeInterval) {
+        guard isGameOver == false else { return }
         guard banana != nil else { return }
         
-        if abs(banana.position.y) > 1000 {
+        if abs(banana.position.y) > 1500 {
             banana.removeFromParent()
             banana = nil
             changePlayer()
