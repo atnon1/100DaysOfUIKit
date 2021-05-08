@@ -1,0 +1,7 @@
+Russia:Moscow
+USA:Washington D.C.
+Armenia:Erevan
+France:Paris
+Japan:Tokyo
+Germany:Berlin
+Spain:Madrid
